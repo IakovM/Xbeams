@@ -1,5 +1,12 @@
+# For details of Crossed molecular beams experiments please see:
+# [1] Gu, X., Guo, Y., Zhang, F., Mebel, A.M. and Kaiser, R.I., 2006. Reaction dynamics of carbon-bearing radicals in circumstellar envelopes of carbon stars. Faraday discussions, 133, pp.245-275. 
+# DOI	https://doi.org/10.1039/B516457E
+# [2] Kaiser, R.I., 2002. Experimental investigation on the formation of carbon-bearing molecules in the interstellar medium via neutral− neutral reactions. Chemical Reviews, 102(5), pp.1309-1358.
+# https://doi.org/10.1021/cr970004v
+
+
 def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, B, C, D, A_carrier_gas, x_max=2200, x_min=-200, y_max=2200, y_min=-200):
-    #This function solve CM angle, Ec and so on.
+    #This function solves the center-of-mass (CM) angle, Ec and so on (collisional energy, max velocity, relative velocity in CM).
     #a_mass, mass of a
      #b_mass,
      #c_mass,
@@ -37,7 +44,9 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     ec = 0.5 * a_mass * b_mass * 0.001 * (a_vp * a_vp + b_vp * b_vp) / (a_mass + b_mass)
 
     x = ((er + ec) * 2 * 1000 * (a_mass + b_mass) / c_mass / d_mass) ** 0.5
+    # max recoil velocity of a heavy product aka n_radius
     n_radius = d_mass * x / (d_mass + c_mass)
+    #speed in CM frame
     cm_speed = (a_mass ** 2 * a_vp ** 2 + b_mass ** 2 * b_vp ** 2) ** 0.5 / (a_mass + b_mass)
 
     print(n_radius)
@@ -47,10 +56,8 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
         high_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset + math.asin(1) * 180 / math.pi
         low_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset - math.asin(1) * 180 / math.pi
     else:
-        high_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset + math.asin(
-            n_radius / cm_speed) * 180 / math.pi
-        low_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset - math.asin(
-            n_radius / cm_speed) * 180 / math.pi
+        high_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset + math.asin(n_radius / cm_speed) * 180 / math.pi
+        low_limit = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset - math.asin(n_radius / cm_speed) * 180 / math.pi
 
     cm = math.atan(b_mass * b_vp / a_mass / a_vp) * 180 / math.pi + cm_offset
     # high_limit = math.atan(b_mass*b_vp/a_mass/a_vp)*180/math.pi+cm_offset+math.asin(n_radius/cm_speed)*180/math.pi
@@ -66,7 +73,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     # calculate v_cm of a ptoduct
     v_cm = math.sqrt(x_cm ** 2 + y_cm ** 2)
 
-    # estimate time of flight of the product
+    # estimate time of flight of the product (parameters a specific for the UH Manoa XB machine)
     t_o_f = 329 / 1000 / v_cm * 10 ** 6 + offset
     t_o_f_ch = t_o_f / 10.24
     t_o_f_low = 329 / 1000 / (v_cm + n_radius) * 10 ** 6 + offset
@@ -100,7 +107,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     plt.text(x=b_vp / 2, y=-100, s=(r'$v_{2{\degree}}$ = %s m/s ' % round(b_vp, 1)), fontsize=12)
 
 
-    # lets plot values to have a controll of them
+    # lets plot values to convenience of them
     plt.figure(figsize=(6, 6))
     plt.axis('off')
     plt.text(x=0.1, y=1.26, s=(f'{A}({a_mass} amu) + {B}({b_mass} amu) = {C}({c_mass} amu) + {D}({d_mass} amu)'),
@@ -127,7 +134,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
 def center_2ch(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s,
                offset, er, A, B, C, D, A_carrier_gas,
                a1_mass, b1_mass, c1_mass, d1_mass, a1_vp, a1_s, b1_vp, b1_s, er_2, x_max=2200, x_min=-200, y_max=2200, y_min=-200):
-    #This function solve CM angle, Ec and so on.
+    #This function solve CM angle, Ec and so on in case you need to overlay two CM cases together
     #a_mass, mass of a
      #b_mass,
      #c_mass,
@@ -273,6 +280,8 @@ def center_2ch(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s,
 def cm_dev(a_mass, b_mass, c_mass, d_mass, a_vp, d_a_vp, a_s, d_a_s, b_vp, d_b_vp, b_s, d_b_s):
     import statistics as st
     import math
+    # this function in use when you need to calculate all possible deviations of Ec, V, CM angles 
+    
     #A + B = C + D
     #a_mass, b_mass, c_mass, d_mass - molecular masses of A,B,C,D
     # a_vp, b_vp = Vp of A and B in m/s,
@@ -322,17 +331,21 @@ def cm_dev(a_mass, b_mass, c_mass, d_mass, a_vp, d_a_vp, a_s, d_a_s, b_vp, d_b_v
     print(f'S(B) = {b_s} ± {d_b_s}')
 
 
-######## TOF #########
-#  laser_off=True or False - to shw or now laser off line
+# TOF 
+# Here starts the section for faster work and process with TOFs (time-of-flight) recorded during Xbeams experiments
+# files must be in the same folder as your Python/Jupyter project
+# Main description of parameters:
+# laser_off=True or False - to show or now laser-off line
 # x_max = 200, x channels to show
-# 'all_raw' -  all raw files
-# 'all_man' - all man files
+# 'all_raw' -  all raw files in a folder
+# 'all_man' - all manipulated (laser-on minus laser-off part of TOF) files a folder
 # 'AC66611.TOF'- plot 1 files
 # ['AC66611.TOF', 'AC66711.TOF'] - list of files
-
+#Examples of use:
 # read_tof("AC762810.TOF", laser_off=True) #only one  file
 # read_tof(["AC762810.TOF","AC762910.TOF"], laser_off=True) #all from list
 # read_tof('all_raw', laser_off=True) #all from list
+###############
 
 import pandas as pd
 from IPython.display import display, HTML
@@ -529,7 +542,7 @@ def get_noise_level_of_column(column_link, noise_starts=1629, noise_ends=2048):
     noise_level = np.sum(noise_level) / len(noise_level)
     return noise_level
 
-#increase dwell time in the file by sum of every two recorded dwell periods in single tof
+#increase dwell time in the file by sum of every two recorded dwell periods in a single tof
 #sum every two rows = make 2.56 dwell as 5.12
 def dwell_x_2(file):
     tof = read_tof(file, x_max=300)
@@ -539,13 +552,13 @@ def dwell_x_2(file):
     tof = tof.groupby(tof.index // N).sum()
     return tof
 
-#this function convert vt to vp for xbeams. S is ratio
+#this function returns convertion of v(t) to v(p) for xbeams. S is a speed ratio. See [1] and [2] at the beginning of the file for a better explanation of v(t), v(p), S 
 def vt_to_vp(vt, s):
     from math import sqrt
     vp=vt*(s+ sqrt(s*s+4))/(s+ sqrt(s*s+8))
     return vp
 
-#this function convert vp to vt for xbeams. S is ratio
+#tthis function returns conversion of v(p) to v(t) for xbeams. S is a ratio. See [1] and [2] in the beginning of the file better explanation of v(t), v(p), S 
 def vp_to_vt(vp, s):
     from math import sqrt
     vt=vp/((s+sqrt(s*s+4))/(s+sqrt(s*s+8)))
