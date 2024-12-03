@@ -542,6 +542,13 @@ def get_noise_level_of_column(column_link, noise_starts=1629, noise_ends=2048):
     noise_level = np.sum(noise_level) / len(noise_level)
     return noise_level
 
+#function add new column with Time data to dataframe
+#since our TOFs recorded with step (channels) you need to know wthat was a step size of ezch channel. in 99% cases for reactive scattering it was 10.24 us
+def add_tofs_column(df,step=10.24, col_name='TOF'):
+    import numpy as np 
+    df[col_name] = np.arange(0, len(df)*step, step)
+
+
 #increase dwell time in the file by sum of every two recorded dwell periods in a single tof
 #sum every two rows = make 2.56 dwell as 5.12
 def dwell_x_2(file):
