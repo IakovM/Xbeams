@@ -5,7 +5,7 @@
 # https://doi.org/10.1021/cr970004v
 
 
-def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, B, C, D, A_carrier_gas, x_max=2200, x_min=-200, y_max=2200, y_min=-200):
+def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, B, C, D, A_carrier_gas, x_max=2200, x_min=-200, y_max=2200, y_min=-200, save_pdf=False):
     #This function solves the center-of-mass (CM) angle, Ec and so on (collisional energy, max velocity, relative velocity in CM).
     #a_mass, mass of a
      #b_mass,
@@ -26,6 +26,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     #x_min = -200, x on for CM fig
     #y_max = 2200, y on for CM fig
     #y_min = -200 y on for CM fig
+    # save_pdf=False = make True if you want to save a pdf with the name CM.pdf
     import math
     import matplotlib.pyplot as plt
     import numpy as np
@@ -70,10 +71,10 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     # high_limit_y = high_limit_x*math.tan(math.pi/2-(math.atan(b_mass*b_vp/a_mass/a_vp)+math.asin(n_radius/cm_speed)))
     # high_limit_y
 
-    # calculate v_cm of a ptoduct
+    # calculate v_cm of a product
     v_cm = math.sqrt(x_cm ** 2 + y_cm ** 2)
 
-    # estimate time of flight of the product (parameters a specific for the UH Manoa XB machine)
+    # estimate time of flight of the product (parameters are specific for the UH Manoa XB machine)
     t_o_f = 329 / 1000 / v_cm * 10 ** 6 + offset
     t_o_f_ch = t_o_f / 10.24
     t_o_f_low = 329 / 1000 / (v_cm + n_radius) * 10 ** 6 + offset
@@ -81,7 +82,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     t_o_f_high = 329 / 1000 / (v_cm - n_radius) * 10 ** 6 + offset
     t_o_f_high_ch = t_o_f_high / 10.24
 
-    # now plot Single reactive channel
+    # now plot a Single reactive channel
 
     plt.figure(figsize=(10, 10))
     plt.plot([0, 0], [0, a_vp])
@@ -107,7 +108,7 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     plt.text(x=b_vp / 2, y=-100, s=(r'$v_{2{\degree}}$ = %s m/s ' % round(b_vp, 1)), fontsize=12)
 
 
-    # lets plot values to convenience of them
+    # Let plot values to the convenience 
     plt.figure(figsize=(6, 6))
     plt.axis('off')
     plt.text(x=0.1, y=1.26, s=(f'{A}({a_mass} amu) + {B}({b_mass} amu) = {C}({c_mass} amu) + {D}({d_mass} amu)'),
@@ -129,11 +130,15 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     plt.text(x=0.1, y=0.16, s=(r'TOF starts at = %s s ' % round(t_o_f_low, 1)), fontsize=16)
     plt.text(x=0.1, y=0.06, s=(r'TOF ends at = %s s ' % round(t_o_f_high, 1)), fontsize=16)
 
+    #save figure as pdf 
+    if save_pdf==True:
+        plt.savefig('CM.pdf', format='pdf', bbox_inches='tight')
+    
     print('peak center in channels = ' + str(t_o_f_ch))
 
 def center_2ch(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s,
                offset, er, A, B, C, D, A_carrier_gas,
-               a1_mass, b1_mass, c1_mass, d1_mass, a1_vp, a1_s, b1_vp, b1_s, er_2, x_max=2200, x_min=-200, y_max=2200, y_min=-200):
+               a1_mass, b1_mass, c1_mass, d1_mass, a1_vp, a1_s, b1_vp, b1_s, er_2, x_max=2200, x_min=-200, y_max=2200, y_min=-200, save_pdf=False):
     #This function solve CM angle, Ec and so on in case you need to overlay two CM cases together
     #a_mass, mass of a
      #b_mass,
@@ -154,6 +159,7 @@ def center_2ch(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s,
     #x_min = -200, x on for CM fig
     #y_max = 2200, y on for CM fig
     #y_min = -200 y on for CM fig
+    # save_pdf=False = make True if you want to save a pdf with name CM_2Ch.pdf
     import math
     import matplotlib.pyplot as plt
     import numpy as np
@@ -274,6 +280,10 @@ def center_2ch(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s,
 
     #plt.text(100, 100, s=('V_1 = 2200, V_2 = '), fontsize=12)
 
+    #save figure as pdf 
+    if save_pdf==True:
+        plt.savefig('CM_2Ch.pdf', format='pdf', bbox_inches='tight')
+                   
     plt.show()
 
 
