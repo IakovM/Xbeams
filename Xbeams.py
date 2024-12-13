@@ -106,7 +106,10 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     plt.text(x=(x_max - x_min) / 2, y=(y_max - y_min) / 2, s=(r'Ec = %s kJ/mol ' % round(ec / 1000, 1)), fontsize=12)
     plt.text(x=-100, y=a_vp / 2, rotation=90, s=(r'$v_{1{\degree}}$ = %s m/s ' % round(a_vp, 1)), fontsize=12)
     plt.text(x=b_vp / 2, y=-100, s=(r'$v_{2{\degree}}$ = %s m/s ' % round(b_vp, 1)), fontsize=12)
-
+   
+    #save figure as pdf 
+    if save_pdf==True:
+        plt.savefig('CM.pdf', format='pdf', bbox_inches='tight')
 
     # Let plot values to the convenience 
     plt.figure(figsize=(6, 6))
@@ -129,10 +132,6 @@ def center(a_mass, b_mass, c_mass, d_mass, a_vp, a_s, b_vp, b_s, offset, er, A, 
     plt.text(x=0.1, y=0.26, s=(r'TOF peak center = %s s ' % round(t_o_f, 1)), fontsize=16)
     plt.text(x=0.1, y=0.16, s=(r'TOF starts at = %s s ' % round(t_o_f_low, 1)), fontsize=16)
     plt.text(x=0.1, y=0.06, s=(r'TOF ends at = %s s ' % round(t_o_f_high, 1)), fontsize=16)
-
-    #save figure as pdf 
-    if save_pdf==True:
-        plt.savefig('CM.pdf', format='pdf', bbox_inches='tight')
     
     print('peak center in channels = ' + str(t_o_f_ch))
 
